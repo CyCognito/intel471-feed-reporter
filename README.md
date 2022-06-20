@@ -1,0 +1,1 @@
+Cronjob to check on cve updates from intel471 and report on them
