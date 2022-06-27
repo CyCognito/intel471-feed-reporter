@@ -10,20 +10,18 @@ spec:
         spec:
           containers:
           - name: feed-reporter
-            image: test/feed-reporter
-            imagePullPolicy: Never
+            image: eu.gcr.io/cyco-main/intel471-feed-reporter
             command:
               - python
               - feed_reporter.py
             env:
-              - name: INTEL471_USERNAME
-                valueFrom:
-                  secretKeyRef:
-                    name: intel471-auth
-                    key: username
-              - name: INTEL471_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: intel471-auth
-                    key: password
+            - name: CONSUL_URI
+              value: "{{ .Values.consul.uri }}"
+            - name: CONSUL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: consul-consul-bootstrap-acl-token
+                  key: token
           restartPolicy: Never
+          resources:
+{{ toYaml .Values.resources | indent 12 }}

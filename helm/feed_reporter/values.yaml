@@ -1,0 +1,11 @@
+resources:
+  requests:
+    memory: 64m
+    cpu: 100m
+  limits:
+    memory: 0.5G
+    cpu: 120m
+
+consul:
+  uri: "http://consul-consul-server.consul.svc:8500"
+  token: "consul token"
