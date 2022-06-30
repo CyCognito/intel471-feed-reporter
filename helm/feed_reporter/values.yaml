@@ -1,3 +1,6 @@
+image: eu.gcr.io/cyco-main/intel471-feed-reporter
+tag: latest
+
 resources:
   requests:
     memory: 64m

@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: feed-reporter
-            image: eu.gcr.io/cyco-main/intel471-feed-reporter
+            image: "{{ .Values.image }}:{{ .Values.tag }}"
             command:
               - python
               - feed_reporter.py
