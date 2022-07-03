@@ -1,2 +1,3 @@
 requests
+slack_sdk
 config-utils-py==0.1.12

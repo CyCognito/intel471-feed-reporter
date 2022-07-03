@@ -1,2 +1,3 @@
 intel471_username: ${INTEL471_USERNAME}
 intel471_password: ${INTEL471_PASSWORD}
+intel471_slack_webhook: ${INTEL471_SLACK_WEBHOOK}
