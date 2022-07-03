@@ -5,7 +5,7 @@ from configutils import ConfigUtils
 
 BASE_URL = "https://api.intel471.com/v1/cve/reports"
 
-CONFIG_DIR = '/config'
+CONFIG_DIR = '/app/config'
 CONFIG_FILE = f'{CONFIG_DIR}/config.yaml'
 
 def getUpdatedCves(username, password, time_back = "2days"):
