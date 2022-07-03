@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: intel471-feed-reporter
+spec:
+  schedule: "@every 1d"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: feed-reporter
+            image: "{{ .Values.image }}:{{ .Values.tag }}"
+            command:
+              - python
+              - feed_reporter.py
+            env:
+            - name: CONSUL_URI
+              value: "{{ .Values.consul.uri }}"
+            - name: CONSUL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: consul-consul-bootstrap-acl-token
+                  key: token
+          restartPolicy: Never
+          resources:
+{{ toYaml .Values.resources | indent 12 }}

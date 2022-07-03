@@ -1,18 +1,30 @@
 import requests
 from datetime import datetime, timedelta
 import os
+from configutils import ConfigUtils
 
 BASE_URL = "https://api.intel471.com/v1/cve/reports"
-AUTH=(os.environ["INTEL471_USERNAME"], os.environ["INTEL471_PASSWORD"])
 
-def getUpdatedCves(time_back = "2days"):
-	resp_count = requests.get(f"{BASE_URL}?lastUpdatedFrom={time_back}&riskLevel=high", auth=AUTH)
-	count = resp_count.json()["cveReportsTotalCount"]
-	resp = requests.get(f"{BASE_URL}?lastUpdatedFrom={time_back}&riskLevel=high&count={count}", auth=AUTH)
-	return resp.json()['cveReports']
+CONFIG_DIR = '/app/config'
+CONFIG_FILE = f'{CONFIG_DIR}/config.yaml'
+
+def getUpdatedCves(username, password, time_back = "2days"):
+	resp = requests.get(f"{BASE_URL}?lastUpdatedFrom={time_back}&riskLevel=high&count=100", auth=(username, password))
+	if resp.json()['cveReportsTotalCount'] == 0:
+		return {}
+	else:
+		return resp.json()['cveReports']
 
 def main():
-	updated_cves = getUpdatedCves("5days")
+	cfg = ConfigUtils(sources=[{'name': 'consul',
+                                'uri': os.getenv('CONSUL_URI', '127.0.0.1'),
+                                'token': os.getenv('CONSUL_TOKEN'),
+                                'env': '/'.join(['cluster', os.getenv('ENV_NAMESPACE')])},
+                               {'name': 'env'}],
+                      schemas=[CONFIG_FILE,])
+	config = cfg.load_config()
+
+	updated_cves = getUpdatedCves(config.get("intel471_username"), config.get("intel471_password"))
 	for cve in updated_cves:
 		cve_name = cve["data"]["cve_report"]["name"]
 		cve_type = cve["data"]["cve_report"]["cve_type"]
