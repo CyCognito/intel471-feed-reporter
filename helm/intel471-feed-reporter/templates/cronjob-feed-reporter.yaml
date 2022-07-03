@@ -3,11 +3,12 @@ kind: CronJob
 metadata:
   name: intel471-feed-reporter
 spec:
-  schedule: "@every 1d"
+  schedule: "7 7 * * *"
   jobTemplate:
     spec:
       template:
         spec:
+          restartPolicy: Never
           containers:
           - name: feed-reporter
             image: "{{ .Values.image }}:{{ .Values.tag }}"
@@ -22,6 +23,5 @@ spec:
                 secretKeyRef:
                   name: consul-consul-bootstrap-acl-token
                   key: token
-          restartPolicy: Never
-          resources:
-{{ toYaml .Values.resources | indent 12 }}
+            resources:
+{{ toYaml .Values.resources | indent 14 }}
