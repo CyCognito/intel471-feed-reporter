@@ -2,6 +2,7 @@ import requests
 from datetime import datetime, timedelta
 import os
 from configutils import ConfigUtils
+from slack_sdk.webhook import WebhookClient
 
 BASE_URL = "https://api.intel471.com/v1/cve/reports"
 
@@ -25,12 +26,17 @@ def main():
 	config = cfg.load_config()
 
 	updated_cves = getUpdatedCves(config.get("intel471_username"), config.get("intel471_password"))
+	text_to_send = f"CVEs updated in the last 48h: {len(updated_cves)}\n\n"
+
 	for cve in updated_cves:
 		cve_name = cve["data"]["cve_report"]["name"]
 		cve_type = cve["data"]["cve_report"]["cve_type"]
 		product = cve["data"]["cve_report"]["product_name"]
 		poc_observed = cve["data"]["cve_report"]["poc"] == "observed"
-		print(f"{cve_name} - product: {product}, type: {cve_type}, poc: {poc_observed}")
+		text_to_send += f"{cve_name} - product: {product}, type: {cve_type}, poc observed: {poc_observed}\n"
+	
+	webhook = WebhookClient(config.get("intel471_slack_webhook"))
+	webhook.send(text=text_to_send)
 
 if __name__ == '__main__':
 	main()
